@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: FastAPI deployment with AWS SAM
+
+Parameters:
+  StageName:
+    Description: The stage name
+    Type: String
+    Default: demo
+  LogLevel:
+    Description: The log level
+    Type: String
+    Default: INFO
+    AllowedValues:
+      - CRITICAL
+      - ERROR
+      - WARNING
+      - INFO
+      - DEBUG
+
+Resources:
+  FastAPIGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: fastapi-api-gateway
+      StageName: !Sub ${StageName}
+      MethodSettings:
+        - DataTraceEnabled: False
+          HttpMethod: "*"
+          ResourcePath: "/*"
+          MetricsEnabled: True
+          LoggingLevel: !Sub ${LogLevel}
+
+  FastAPILambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: fastapi-function
+      CodeUri: ./src
+      Handler: main.handler
+      Role: !GetAtt FastAPIRole.Arn
+      Runtime: python3.9
+      Environment:
+        Variables:
+          LOG_LEVEL: !Sub ${LogLevel}
+      Events:
+        AnyRequest:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FastAPIGateway
+            Path: '/'
+            Method: ANY
+
+  FastAPIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub fastapi-lambda-role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref FastAPIPolicy
+
+  FastAPIPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: fastapi-lambda-policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: XRayTracing
+            Effect: Allow
+            Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Resource:
+              - '*'
