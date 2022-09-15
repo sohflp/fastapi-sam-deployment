@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "fastapi-sam-demo"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-19dkgr8t4lbn8"
+s3_prefix = "fastapi-sam-demo"
+region = "ap-southeast-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "StageName=\"demo\" LogLevel=\"INFO\""
+image_repositories = []
