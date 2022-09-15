@@ -1,0 +1,2 @@
+fastapi[all]==0.83.0
+mangum==0.15.1
