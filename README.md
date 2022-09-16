@@ -12,25 +12,7 @@ The process to install the API and deploy in AWS is available below.
 # Installation and deployment guide
 
 1. Configure the AWS credentials or assume a role into the desired AWS account via `awsume`.
-2. Create a virtual environment in Python:
-
-```
-python3 -m venv .venv
-```
-
-3. Activate the virtual environment:
-
-```
-source .venv/bin/activate
-```
-
-4. Install the python dependencies:
-
-```
-pip install -r requirements.txt
-```
-
-5. Run the following commands with SAM CLI:
+2. Run the following commands with SAM CLI:
 
 ```
 sam build
