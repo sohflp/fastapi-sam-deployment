@@ -25,10 +25,8 @@ Resources:
       Name: fastapi-api-gateway
       StageName: !Sub ${StageName}
       MethodSettings:
-        - DataTraceEnabled: False
-          HttpMethod: "*"
+        - HttpMethod: "*"
           ResourcePath: "/*"
-          MetricsEnabled: True
           LoggingLevel: !Sub ${LogLevel}
 
   FastAPILambdaFunction:
@@ -64,19 +62,3 @@ Resources:
               - sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - !Ref FastAPIPolicy
-
-  FastAPIPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: fastapi-lambda-policy
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Sid: XRayTracing
-            Effect: Allow
-            Action:
-              - xray:PutTraceSegments
-              - xray:PutTelemetryRecords
-            Resource:
-              - '*'
