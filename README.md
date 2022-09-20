@@ -24,3 +24,11 @@ During the deployment process the parameters in `samconfig.toml` will be used as
 ```
 sam deploy --guided
 ```
+
+# Local tests with SAM
+
+It is possible to simulate the API Gateway server locally by running the following command:
+
+```
+sam local start-api
+```
