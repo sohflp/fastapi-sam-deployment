@@ -41,12 +41,18 @@ Resources:
         Variables:
           LOG_LEVEL: !Sub ${LogLevel}
       Events:
-        AnyRequest:
+        Root:
           Type: Api
           Properties:
             RestApiId: !Ref FastAPIGateway
             Path: '/'
-            Method: ANY
+            Method: GET
+        GetUsers:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FastAPIGateway
+            Path: '/api/v1/users'
+            Method: GET
 
   FastAPIRole:
     Type: AWS::IAM::Role
